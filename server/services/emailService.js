@@ -153,13 +153,15 @@ module.exports = {
     const newSubject = `[TICKET-${ticketId}] Fwd: ${originalEmail.subject}`;
 
     const intro = `
-    <div style="background-color: #f3f4f6; padding: 10px; border-left: 4px solid #3b82f6; margin-bottom: 20px;">
-      <strong>Nuevo Ticket Asignado</strong><br/>
-      <strong>Resumen IA:</strong> ${aiSummary.summary}<br/>
-      <strong>Urgencia:</strong> ${aiSummary.urgency}<br/>
-      <strong>Sentimiento:</strong> ${aiSummary.sentiment}
+    <div style="background-color: #f3f4f6; padding: 15px; border-left: 4px solid #3b82f6; margin-bottom: 20px; font-family: sans-serif;">
+      <h3 style="margin: 0 0 10px 0; color: #1e3a8a;">🎫 Nuevo Ticket Asignado</h3>
+      <p style="margin: 5px 0;"><strong>De:</strong> ${originalEmail.from} (<a href="mailto:${originalEmail.fromAddress}">${originalEmail.fromAddress}</a>)</p>
+      <p style="margin: 5px 0;"><strong>Resumen IA:</strong> ${aiSummary.summary}</p>
+      <p style="margin: 5px 0;"><strong>Urgencia:</strong> ${aiSummary.urgency}</p>
+      <p style="margin: 5px 0;"><strong>Sentimiento:</strong> ${aiSummary.sentiment}</p>
+      <hr style="border: none; border-top: 1px solid #ddd; margin: 15px 0;">
+      <p style="margin: 0; font-size: 12px; color: #666;">Para responder al cliente, haz clic en "Responder" o escribe a <a href="mailto:${originalEmail.fromAddress}">${originalEmail.fromAddress}</a></p>
     </div>
-    <hr/>
     `;
 
     const mailOptions = {
