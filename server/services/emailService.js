@@ -32,6 +32,12 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
+  family: 4, // Force IPv4 to avoid ETIMEDOUT on some cloud networks
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 5000,
 });
 
 module.exports = {
