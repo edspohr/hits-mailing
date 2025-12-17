@@ -57,11 +57,19 @@ async function processNewEmail(email) {
 }
 
 async function processReplyEmail(email, ticketId) {
-  console.log(`Processing REPLY for Ticket ${ticketId}: ${email.subject}`);
+  console.log(`[Worker] Processing REPLY for Ticket ${ticketId}`);
+  console.log(`[Worker] Reply from: ${email.fromAddress}`);
+  console.log(
+    `[Worker] Body preview: "${(email.text || "").substring(0, 100)}..."`
+  );
 
   // 1. Analyze for Closure
   const analysis = await aiService.analyzeReply(email.text);
-  console.log("Reply Analysis:", analysis);
+  console.log(
+    `[Worker] AI Analysis: isResolved=${analysis.isResolved}, reason="${
+      analysis.reason || "N/A"
+    }"`
+  );
 
   // 2. Add as Comment to DB
   await dbService.addTicketComment(ticketId, {
@@ -69,11 +77,21 @@ async function processReplyEmail(email, ticketId) {
     body: email.text,
     aiAnalysis: analysis,
   });
+  console.log(`[Worker] Comment added to Ticket ${ticketId}`);
 
   // 3. Close if Resolved
   if (analysis.isResolved) {
-    console.log(`Ticket ${ticketId} marked as RESOLVED by AI.`);
+    console.log(
+      `[Worker] *** CLOSING Ticket ${ticketId} (AI detected resolution) ***`
+    );
     await dbService.updateTicketStatus(ticketId, "CLOSED");
+    console.log(
+      `[Worker] Ticket ${ticketId} status updated to CLOSED with timestamp.`
+    );
+  } else {
+    console.log(
+      `[Worker] Ticket ${ticketId} remains OPEN (AI did not detect resolution).`
+    );
   }
 }
 
@@ -86,7 +104,12 @@ async function runWorkerCycle() {
     const processedUids = [];
 
     for (const email of emails) {
+      console.log(`[Worker] Processing email. Subject: "${email.subject}"`);
+
       const ticketId = emailService.parseTicketId(email.subject);
+      console.log(
+        `[Worker] Parsed Ticket ID: ${ticketId || "NONE (new ticket)"}`
+      );
 
       if (ticketId) {
         await processReplyEmail(email, ticketId);
