@@ -4,7 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 const USERS = [
   { name: 'Edmundo Spohr', email: 'edmundo@spohr.cl', password: 'hits2025', role: 'manager' },
   { name: 'Rodrigo Muñoz', email: 'rodrigo.munoz@hitscorredoraseguros.cl', password: 'hits2025', role: 'manager' },
-  { name: 'Juan Pablo Carmona', email: 'juan.carmona@hitscorredoraseguros.cl', password: 'hits2025', role: 'manager' }
+  { name: 'Juan Pablo Carmona', email: 'juan.carmona@hitscorredoraseguros.cl', password: 'hits2025', role: 'manager' },
+  { name: 'Demo Gestor', email: 'demo@hitscorredoraseguros.cl', password: 'hits2025', role: 'manager' }
 ];
 
 function App() {
