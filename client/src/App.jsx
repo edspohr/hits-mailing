@@ -101,7 +101,11 @@ function App() {
   // Close ticket manually
   const closeTicket = async (ticketId) => {
     try {
-      await fetch(`/api/tickets/${ticketId}/close`, { method: 'POST' });
+      await fetch(`/api/tickets/${ticketId}/close`, { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ closedBy: user?.email })
+      });
       fetchTickets();
       setSelectedTicket(null);
     } catch (err) {
@@ -447,9 +451,14 @@ function App() {
                   <p className="font-medium">{new Date(selectedTicket.createdAt).toLocaleString('es-CL')}</p>
                 </div>
                 {selectedTicket.closedAt && (
-                  <div className="col-span-2">
-                    <p className="text-xs text-gray-500 uppercase">Cerrado</p>
-                    <p className="font-medium">{new Date(selectedTicket.closedAt).toLocaleString('es-CL')}</p>
+                  <div className="col-span-2 bg-green-50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-500 uppercase">Resuelto</p>
+                    <p className="font-medium text-green-800">
+                      Por: {selectedTicket.closedBy || 'Sistema'}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {new Date(selectedTicket.closedAt).toLocaleString('es-CL')}
+                    </p>
                   </div>
                 )}
               </div>

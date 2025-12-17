@@ -84,10 +84,8 @@ async function processReplyEmail(email, ticketId) {
     console.log(
       `[Worker] *** CLOSING Ticket ${ticketId} (AI detected resolution) ***`
     );
-    await dbService.updateTicketStatus(ticketId, "CLOSED");
-    console.log(
-      `[Worker] Ticket ${ticketId} status updated to CLOSED with timestamp.`
-    );
+    await dbService.updateTicketStatus(ticketId, "CLOSED", email.fromAddress);
+    console.log(`[Worker] Ticket ${ticketId} closed by ${email.fromAddress}.`);
   } else {
     console.log(
       `[Worker] Ticket ${ticketId} remains OPEN (AI did not detect resolution).`
@@ -170,9 +168,12 @@ app.post("/api/tickets/:id/assign", async (req, res) => {
 // Manual close ticket
 app.post("/api/tickets/:id/close", async (req, res) => {
   const { id } = req.params;
+  const { closedBy } = req.body || {};
   try {
-    await dbService.updateTicketStatus(id, "CLOSED");
-    console.log(`[API] Ticket ${id} manually closed.`);
+    await dbService.updateTicketStatus(id, "CLOSED", closedBy || "Portal");
+    console.log(
+      `[API] Ticket ${id} manually closed by ${closedBy || "Portal"}.`
+    );
     res.json({ success: true, message: "Ticket closed" });
   } catch (e) {
     console.error(`[API] Error closing ticket ${id}:`, e);

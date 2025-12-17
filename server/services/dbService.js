@@ -38,10 +38,13 @@ const initDB = async () => {
   try {
     const client = await pool.connect();
     await client.query(createTableQuery);
-    // Simple migration: Try to add column if it doesn't exist (ignore error if exists)
+    // Simple migrations: Add columns if they don't exist
     try {
       await client.query(
         "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS closed_at TIMESTAMP"
+      );
+      await client.query(
+        "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS closed_by TEXT"
       );
     } catch (e) {
       /* ignore */
@@ -90,17 +93,18 @@ module.exports = {
     return res.rows[0].id;
   },
 
-  updateTicketStatus: async (ticketId, status) => {
+  updateTicketStatus: async (ticketId, status, closedBy = null) => {
     if (!process.env.DATABASE_URL) return;
 
-    let query =
-      "UPDATE tickets SET status = $1, updated_at = NOW() WHERE id = $2";
     if (status === "CLOSED") {
-      query =
-        "UPDATE tickets SET status = $1, updated_at = NOW(), closed_at = NOW() WHERE id = $2";
+      const query =
+        "UPDATE tickets SET status = $1, updated_at = NOW(), closed_at = NOW(), closed_by = $2 WHERE id = $3";
+      await pool.query(query, [status, closedBy, ticketId]);
+    } else {
+      const query =
+        "UPDATE tickets SET status = $1, updated_at = NOW() WHERE id = $2";
+      await pool.query(query, [status, ticketId]);
     }
-
-    await pool.query(query, [status, ticketId]);
   },
 
   addTicketComment: async (ticketId, commentData) => {
@@ -151,6 +155,7 @@ module.exports = {
       status: row.status,
       createdAt: row.created_at,
       closedAt: row.closed_at,
+      closedBy: row.closed_by,
     }));
   },
 };
