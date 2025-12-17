@@ -150,16 +150,24 @@ module.exports = {
     };
 
     try {
+      console.log(
+        `[Email Service] Attempting to forward ticket ${ticketId} to ${assigneeAddress}`
+      );
       if (process.env.SMTP_USER) {
         await transporter.sendMail(mailOptions);
-        console.log(`Email forwarded to ${assigneeAddress}`);
+        console.log(
+          `[Email Service] SUCCESS: Email forwarded to ${assigneeAddress}`
+        );
       } else {
         console.log(
           `[MOCK EMAIL] Would forward to ${assigneeAddress} with subject: ${newSubject}`
         );
       }
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error(
+        `[Email Service] ERROR sending to ${assigneeAddress}:`,
+        error
+      );
     }
   },
 };
