@@ -1,7 +1,20 @@
 const imaps = require("imap-simple");
 const nodemailer = require("nodemailer");
 const simpleParser = require("mailparser").simpleParser;
+const { Resend } = require("resend");
 require("dotenv").config();
+
+// Initialize Resend if API Key is available
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
+if (resend) {
+  console.log(
+    "[Email Service] Resend configured. Emails will be sent via Resend API."
+  );
+} else {
+  console.log("[Email Service] No RESEND_API_KEY. Falling back to SMTP.");
+}
 
 // Configuration for IMAP
 const imapConfig = {
@@ -166,10 +179,26 @@ module.exports = {
       console.log(
         `[Email Service] Attempting to forward ticket ${ticketId} to ${assigneeAddress}`
       );
-      if (process.env.SMTP_USER) {
+
+      // Use Resend if configured, otherwise fallback to SMTP
+      if (resend) {
+        const fromEmail =
+          process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+        const result = await resend.emails.send({
+          from: fromEmail,
+          to: assigneeAddress,
+          subject: newSubject,
+          html: intro + (originalEmail.html || originalEmail.text),
+          reply_to: originalEmail.fromAddress,
+        });
+        console.log(
+          `[Email Service] SUCCESS (Resend): Email sent to ${assigneeAddress}`,
+          result
+        );
+      } else if (process.env.SMTP_USER) {
         await transporter.sendMail(mailOptions);
         console.log(
-          `[Email Service] SUCCESS: Email forwarded to ${assigneeAddress}`
+          `[Email Service] SUCCESS (SMTP): Email forwarded to ${assigneeAddress}`
         );
       } else {
         console.log(
