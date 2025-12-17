@@ -17,9 +17,12 @@ const imapConfig = {
 };
 
 // Transporter for sending emails (SMTP)
-// Transporter for sending emails (SMTP)
-const smtpPort = process.env.SMTP_PORT || 587;
-const isSecure = smtpPort == 465;
+const smtpPort = parseInt(process.env.SMTP_PORT || "587", 10);
+const isSecure = smtpPort === 465;
+
+console.log(
+  `[Email Service] Config: Host=${process.env.SMTP_HOST}, Port=${smtpPort}, Secure=${isSecure}, User=${process.env.SMTP_USER}`
+);
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
