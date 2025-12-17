@@ -7,6 +7,7 @@ module.exports = {
   assignments: {
     "Responsabilidad Civil Médica": "rodrigo.munoz@hitscorredoraseguros.cl",
     "Otros Seguros": "juan.carmona@hitscorredoraseguros.cl",
+    Prueba: "edmundo@spohr.cl",
     Otro: "juan.carmona@hitscorredoraseguros.cl", // Default fallback
   },
 
