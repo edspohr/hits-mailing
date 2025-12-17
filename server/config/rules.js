@@ -8,6 +8,7 @@ module.exports = {
     "Responsabilidad Civil Médica": "rodrigo.munoz@hitscorredoraseguros.cl",
     "Otros Seguros": "juan.carmona@hitscorredoraseguros.cl",
     Prueba: "edmundo@spohr.cl",
+    Demo: "demo@hitscorredoraseguros.cl",
     Otro: "juan.carmona@hitscorredoraseguros.cl", // Default fallback
   },
 

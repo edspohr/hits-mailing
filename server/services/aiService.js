@@ -32,6 +32,7 @@ module.exports = {
       
       Tus tareas:
       1. Clasifica el correo en una de estas categorías: [${categories}].
+         - Si el asunto contiene la palabra "demo" o "demostración", clasifícalo como 'Demo'.
          - Si el usuario menciona explícitamente que es una "prueba", "test", o "validación", clasifícalo como 'Prueba'.
          - Si tiene que ver explícitamente con "RC Médica", "Responsabilidad Civil", "Mala Praxis", clasifícalo como 'Responsabilidad Civil Médica'.
          - Cualquier otro tipo de seguro (Auto, Hogar, Vida, Incendio, etc) clasifícalo como 'Otros Seguros'.
