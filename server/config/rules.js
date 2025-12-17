@@ -1,15 +1,13 @@
 /**
- * Reglas de asignación de tickets.
+ * Reglas de asignación de tickets para Hits Corredora de Seguros.
  * Gemini clasificará el correo en una de estas categorías.
  */
 module.exports = {
   // Mapeo Categoría -> Email del Responsable
   assignments: {
-    "Soporte Técnico": "soporte@tuempresa.com",
-    Facturación: "finanzas@tuempresa.com",
-    Ventas: "ventas@tuempresa.com",
-    "Recursos Humanos": "rrhh@tuempresa.com",
-    Otro: "general@tuempresa.com", // Default
+    "Responsabilidad Civil Médica": "rodrigo.munoz@hitscorredoraseguros.cl",
+    "Otros Seguros": "juan.carmona@hitscorredoraseguros.cl",
+    Otro: "juan.carmona@hitscorredoraseguros.cl", // Default fallback
   },
 
   // Categorías válidas para pasarle al prompt de Gemini

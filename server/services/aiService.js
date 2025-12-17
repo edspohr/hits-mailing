@@ -24,7 +24,7 @@ module.exports = {
     const categories = rules.getCategories();
 
     const prompt = `
-      Actúa como un asistente de triaje de correos avanzado. Analiza el siguiente correo electrónico.
+      Actúa como un asistente de triaje de correos para "Hits Corredora de Seguros". Analiza el siguiente correo electrónico.
       
       Remitente: ${sender}
       Asunto: ${subject}
@@ -32,6 +32,8 @@ module.exports = {
       
       Tus tareas:
       1. Clasifica el correo en una de estas categorías: [${categories}].
+         - Si tiene que ver explícitamente con "RC Médica", "Responsabilidad Civil", "Mala Praxis", clasifícalo como 'Responsabilidad Civil Médica'.
+         - Cualquier otro tipo de seguro (Auto, Hogar, Vida, Incendio, etc) clasifícalo como 'Otros Seguros'.
       2. Determina la urgencia (Baja, Media, Alta).
       3. Genera un resumen ejecutivo de 1 linea.
       4. Analiza el sentimiento (Positivo, Negativo, Neutral).

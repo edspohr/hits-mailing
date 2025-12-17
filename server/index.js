@@ -6,12 +6,18 @@ const dbService = require("./services/dbService");
 const rules = require("./config/rules");
 require("dotenv").config();
 
+const path = require("path");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const POLL_INTERVAL = process.env.POLL_INTERVAL_MS || 60000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve Static Frontend (Production)
+const clientDistPath = path.join(__dirname, "../client/dist");
+app.use(express.static(clientDistPath));
 
 // --- WORKER LOGIC ---
 
@@ -137,6 +143,12 @@ app.post("/api/tickets/:id/assign", async (req, res) => {
   // Mock update
   console.log(`Reassigning Ticket ${id} to ${assignedTo}`);
   res.json({ success: true, message: "Reassigned" });
+});
+
+// --- FALLBACK (SPA) ---
+// Any request that doesn't match an API route returns index.html
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(clientDistPath, "index.html"));
 });
 
 // --- START ---
