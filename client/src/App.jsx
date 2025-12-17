@@ -120,9 +120,19 @@ function App() {
   // Filter and sort logic
   const filteredTickets = tickets
     .filter(t => {
+      // Agents only see their own assigned tickets
+      if (user?.role === 'agent' && t.assignedTo !== user?.email) return false;
+      
+      // Apply status filter
       if (statusFilter !== 'ALL' && t.status !== statusFilter) return false;
-      if (assigneeFilter === 'MINE' && t.assignedTo !== user?.email) return false;
-      if (assigneeFilter !== 'ALL' && assigneeFilter !== 'MINE' && t.assignedTo !== assigneeFilter) return false;
+      
+      // Apply assignee filter (for managers)
+      if (user?.role === 'manager') {
+        if (assigneeFilter === 'MINE' && t.assignedTo !== user?.email) return false;
+        if (assigneeFilter !== 'ALL' && assigneeFilter !== 'MINE' && t.assignedTo !== assigneeFilter) return false;
+      }
+      
+      // Apply search filter
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         return (
