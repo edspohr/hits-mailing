@@ -11,6 +11,7 @@ const imapConfig = {
     host: process.env.IMAP_HOST,
     port: process.env.IMAP_PORT || 993,
     tls: process.env.IMAP_TLS === "true",
+    tlsOptions: { rejectUnauthorized: false },
     authTimeout: 3000,
   },
 };
@@ -41,8 +42,12 @@ module.exports = {
    */
   fetchUnreadEmails: async () => {
     try {
+      console.log(
+        `[Email Service] Connecting to IMAP as ${imapConfig.imap.user}...`
+      );
       const connection = await imaps.connect(imapConfig);
       await connection.openBox("INBOX");
+      console.log("[Email Service] INBOX opened. Searching for UNSEEN...");
 
       const searchCriteria = ["UNSEEN"];
       const fetchOptions = {
