@@ -80,16 +80,24 @@ module.exports = {
     }
 
     const prompt = `
-      Actúa como supervisor. Analiza la siguiente respuesta de un agente de soporte hacia un cliente o interna.
-      Determina si, basándote explícitamente en el texto, el problema ha sido RESUELTO o el ticket CERRADO.
-      Busca frases como "quedó solucionado", "ticket cerrado", "listo", "ya arreglamos el problema", "procesado con éxito".
+      Eres un supervisor de tickets. Analiza la siguiente respuesta y determina si indica que el ticket está RESUELTO.
       
-      Cuerpo: ${body}
+      IMPORTANTE: Responde isResolved: true si el mensaje contiene CUALQUIERA de estos indicadores:
+      - "resuelto", "solucionado", "listo", "ok", "hecho", "completado"
+      - "ticket cerrado", "caso cerrado", "problema resuelto"
+      - "ya está", "quedó listo", "arreglado"
+      - "procesado", "gestionado", "tramitado"
+      - Cualquier confirmación de que el trabajo está terminado
+      
+      Cuerpo del mensaje:
+      ---
+      ${body}
+      ---
 
       Responde ÚNICAMENTE con un JSON válido:
       {
         "isResolved": boolean,
-        "reason": "Breve justificación de por qué crees que está resuelto o no"
+        "reason": "Breve justificación"
       }
     `;
 
