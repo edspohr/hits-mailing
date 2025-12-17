@@ -147,6 +147,7 @@ module.exports = {
       summary: row.summary,
       sentiment: row.sentiment,
       assignedTo: row.assigned_to,
+      emailBody: row.email_body,
       status: row.status,
       createdAt: row.created_at,
       closedAt: row.closed_at,

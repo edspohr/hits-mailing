@@ -163,9 +163,21 @@ app.get("/api/tickets", async (req, res) => {
 app.post("/api/tickets/:id/assign", async (req, res) => {
   const { id } = req.params;
   const { assignedTo } = req.body;
-  // Mock update
   console.log(`Reassigning Ticket ${id} to ${assignedTo}`);
   res.json({ success: true, message: "Reassigned" });
+});
+
+// Manual close ticket
+app.post("/api/tickets/:id/close", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await dbService.updateTicketStatus(id, "CLOSED");
+    console.log(`[API] Ticket ${id} manually closed.`);
+    res.json({ success: true, message: "Ticket closed" });
+  } catch (e) {
+    console.error(`[API] Error closing ticket ${id}:`, e);
+    res.status(500).json({ success: false, error: e.message });
+  }
 });
 
 // --- FALLBACK (SPA) ---
