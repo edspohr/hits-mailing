@@ -11,6 +11,23 @@ module.exports = {
    * Analyzes an incoming new email to categorize it.
    */
   analyzeNewTicket: async (subject, body, sender) => {
+    // 0. Manual Override for "Prueba" (Works without API Key)
+    const lowerSubject = subject.toLowerCase();
+    const lowerBody = body.toLowerCase();
+    if (
+      lowerSubject.includes("prueba") ||
+      lowerSubject.includes("test") ||
+      lowerBody.includes("prueba_validacion")
+    ) {
+      console.log("Manual detection: Classified as 'Prueba'");
+      return {
+        category: "Prueba",
+        urgency: "Baja",
+        summary: "Detectado manualmente por palabra clave",
+        sentiment: "Neutral",
+      };
+    }
+
     if (!process.env.GEMINI_API_KEY) {
       console.warn("No GEMINI_API_KEY. Returning mock analysis.");
       return {
