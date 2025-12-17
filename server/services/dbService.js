@@ -22,7 +22,8 @@ const initDB = async () => {
       email_body TEXT,
       status TEXT DEFAULT 'OPEN',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      closed_at TIMESTAMP
     );
     
     CREATE TABLE IF NOT EXISTS ticket_comments (
@@ -37,6 +38,15 @@ const initDB = async () => {
   try {
     const client = await pool.connect();
     await client.query(createTableQuery);
+    // Simple migration: Try to add column if it doesn't exist (ignore error if exists)
+    try {
+      await client.query(
+        "ALTER TABLE tickets ADD COLUMN IF NOT EXISTS closed_at TIMESTAMP"
+      );
+    } catch (e) {
+      /* ignore */
+    }
+
     client.release();
     console.log("DB Initialized (Tables Verified)");
   } catch (err) {
@@ -82,10 +92,15 @@ module.exports = {
 
   updateTicketStatus: async (ticketId, status) => {
     if (!process.env.DATABASE_URL) return;
-    await pool.query(
-      "UPDATE tickets SET status = $1, updated_at = NOW() WHERE id = $2",
-      [status, ticketId]
-    );
+
+    let query =
+      "UPDATE tickets SET status = $1, updated_at = NOW() WHERE id = $2";
+    if (status === "CLOSED") {
+      query =
+        "UPDATE tickets SET status = $1, updated_at = NOW(), closed_at = NOW() WHERE id = $2";
+    }
+
+    await pool.query(query, [status, ticketId]);
   },
 
   addTicketComment: async (ticketId, commentData) => {
@@ -113,6 +128,8 @@ module.exports = {
           category: "Demo",
           urgency: "Low",
           assigned_to: "admin@demo.com",
+          createdAt: new Date().toISOString(),
+          closedAt: null,
         },
       ];
     }
@@ -132,6 +149,7 @@ module.exports = {
       assignedTo: row.assigned_to,
       status: row.status,
       createdAt: row.created_at,
+      closedAt: row.closed_at,
     }));
   },
 };

@@ -110,7 +110,8 @@ function App() {
                     <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Categoría</th>
                     <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Prioridad</th>
                     <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Asignado</th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado</th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Creado</th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado / Cierre</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -135,12 +136,22 @@ function App() {
                         </span>
                         </td>
                         <td className="py-3 px-4 text-sm text-gray-600">{ticket.assignedTo}</td>
+                        <td className="py-3 px-4 text-xs text-gray-500">
+                          {new Date(ticket.createdAt).toLocaleString()}
+                        </td>
                         <td className="py-3 px-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            ticket.status === 'CLOSED' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
-                            {ticket.status === 'CLOSED' ? 'Resuelto' : 'Abierto'}
-                        </span>
+                          <div className="flex flex-col gap-1">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium w-max ${
+                                ticket.status === 'CLOSED' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                            }`}>
+                                {ticket.status === 'CLOSED' ? 'Resuelto' : 'Abierto'}
+                            </span>
+                            {ticket.closedAt && (
+                              <span className="text-xs text-gray-400">
+                                {new Date(ticket.closedAt).toLocaleString()}
+                              </span>
+                            )}
+                          </div>
                         </td>
                     </tr>
                     ))}
