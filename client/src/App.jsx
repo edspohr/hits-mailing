@@ -5,6 +5,7 @@ function App() {
   const [user, setUser] = useState(null); 
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('ALL'); // 'ALL', 'OPEN', 'CLOSED'
 
   // Mock Login Users for Demo
   const users = [
@@ -39,10 +40,14 @@ function App() {
     }
   }, [user]);
 
-  // Filter Logic (All show everything as they are Managers, but helpful for future)
-  const filteredTickets = user?.role === 'manager' 
+  // Filter Logic
+  const filteredTickets = (user?.role === 'manager' 
     ? tickets 
-    : tickets.filter(t => t.assignedTo === user?.email || t.status === 'OPEN');
+    : tickets.filter(t => t.assignedTo === user?.email || t.status === 'OPEN')
+  ).filter(t => {
+     if (statusFilter === 'ALL') return true;
+     return t.status === statusFilter;
+  });
 
   if (!user) {
     return (
@@ -101,6 +106,24 @@ function App() {
           <div className="text-center py-20 text-gray-500">Cargando tickets...</div>
         ) : (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            
+            {/* Toolbar */}
+            <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                <h2 className="font-semibold text-gray-700">Tickets</h2>
+                <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500">Filtrar:</span>
+                    <select 
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                        <option value="ALL">Todos</option>
+                        <option value="OPEN">Abiertos</option>
+                        <option value="CLOSED">Resueltos</option>
+                    </select>
+                </div>
+            </div>
+
             <div className="overflow-x-auto">
                 <table className="min-w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
