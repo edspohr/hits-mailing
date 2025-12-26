@@ -89,10 +89,10 @@ module.exports = {
       
       IMPORTANTE: Responde isResolved: true si el mensaje contiene CUALQUIERA de estos indicadores:
       - "resuelto", "solucionado", "listo", "ok", "hecho", "completado"
-      - "ticket cerrado", "caso cerrado", "problema resuelto"
+      - "ticket cerrado", "caso cerrado", "problema resuelto", "cerrar ticket"
       - "ya está", "quedó listo", "arreglado"
-      - "procesado", "gestionado", "tramitado"
-      - Cualquier confirmación de que el trabajo está terminado
+      - "procesado", "gestionado", "tramitado", "finalizado"
+      - Cualquier confirmación de que el trabajo está terminado o instrucciones de cerrar.
       
       Cuerpo del mensaje:
       ---
