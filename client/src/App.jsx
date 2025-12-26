@@ -366,7 +366,7 @@ function App() {
                 </select>
 
                 <button 
-                  onClick={fetchTickets}
+                  onClick={() => window.location.reload()}
                   className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded-lg transition"
                 >
                   🔄 Refrescar

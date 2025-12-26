@@ -39,8 +39,17 @@ async function processNewEmail(email) {
   console.log("AI Analysis:", analysis);
 
   // 2. Determine Assignee
-  const assigneeEmail =
-    rules.assignments[analysis.category] || rules.assignments["Otro"];
+  let assigneeEmail = rules.assignments[analysis.category];
+
+  // Specific rule for AI errors
+  if (analysis.summary === "Error al analizar") {
+    assigneeEmail = "edmundo@spohr.cl";
+  }
+
+  // Fallback
+  if (!assigneeEmail) {
+    assigneeEmail = rules.assignments["Otro"];
+  }
 
   // 3. Create Ticket in DB
   const ticketData = {
