@@ -4,7 +4,7 @@ require("dotenv").config();
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "MOCK_KEY");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 module.exports = {
   /**
@@ -70,7 +70,10 @@ module.exports = {
       return {
         category: "Otro",
         urgency: "Media",
-        summary: "Error al analizar",
+        summary: `Error IA: ${error.message || error.toString()}`.substring(
+          0,
+          100
+        ),
         sentiment: "Neutral",
       };
     }
