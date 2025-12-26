@@ -58,7 +58,7 @@ module.exports = {
    * Helper to parse [TICKET-XYZ] from subject
    */
   parseTicketId: (subject) => {
-    const match = subject.match(/\[TICKET-([^\]]+)\]/i);
+    const match = (subject || "").match(/\[TICKET-([^\]]+)\]/i);
     return match ? match[1] : null; // Returns ID (e.g. 101) or null
   },
 

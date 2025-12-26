@@ -115,18 +115,27 @@ async function runWorkerCycle() {
     for (const email of emails) {
       console.log(`[Worker] Processing email. Subject: "${email.subject}"`);
 
-      const ticketId = emailService.parseTicketId(email.subject);
-      console.log(
-        `[Worker] Parsed Ticket ID: ${ticketId || "NONE (new ticket)"}`
-      );
+      try {
+        const ticketId = emailService.parseTicketId(email.subject);
+        console.log(
+          `[Worker] Parsed Ticket ID: ${ticketId || "NONE (new ticket)"}`
+        );
 
-      if (ticketId) {
-        await processReplyEmail(email, ticketId);
-      } else {
-        await processNewEmail(email);
+        if (ticketId) {
+          await processReplyEmail(email, ticketId);
+        } else {
+          await processNewEmail(email);
+        }
+
+        processedUids.push(email.uid);
+      } catch (err) {
+        console.error(
+          `[Worker] Failed to verify/process email ${email.uid}:`,
+          err
+        );
+        // Optional: Mark as read to avoid infinite loop matching the same bad email?
+        // For now, just log and skip. Next cycle will retry manually or stay stuck but won't crash entire batch.
       }
-
-      processedUids.push(email.uid);
     }
 
     if (processedUids.length > 0) {
