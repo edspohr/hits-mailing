@@ -13,7 +13,7 @@ module.exports = {
     "Consultas generales (Juan Pablo)":
       "juan.carmona@hitscorredoradeseguros.cl",
     Prueba: "edmundo@spohr.cl",
-    Demo: "demo@hitscorredoraseguros.cl",
+    Demo: "edmundo@spohr.cl",
     Otro: "rodrigo.munoz@hitscorredoradeseguros.cl", // Default fallback
   },
 
@@ -23,8 +23,8 @@ module.exports = {
     - "Cobranza" -> Marcela Aránguiz. Pagos de médicos.
     - "Cotizaciones" (RCM o Venta) -> Eddis Rodriguez.
     - "Consultas generales" o casos no definidos -> Rodrigo Muñoz (Default operational) o Juan Pablo Carmona (Comercial / Grandes Clientes).
-    - "Prueba" -> Correos de prueba.
-    - "Demo" -> Correos de demostración.
+    - "Prueba" -> Correos de prueba (edmundo@spohr.cl).
+    - "Demo" -> Correos de demostración (edmundo@spohr.cl).
   `,
 
   // Categorías válidas para pasarle al prompt de Gemini

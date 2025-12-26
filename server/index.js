@@ -53,6 +53,17 @@ async function processNewEmail(email) {
   // 4. Forward Email
   await emailService.forwardTicket(email, ticketId, assigneeEmail, analysis);
 
+  // 5. Bitacora Log (for Demo)
+  if (analysis.category === "Demo" || analysis.category === "Prueba") {
+    await dbService.addTicketComment(ticketId, {
+      from: "System",
+      body: `Ticket ${analysis.category} creado el ${new Date().toLocaleString(
+        "es-CL"
+      )}`,
+      aiAnalysis: { isSystemLog: true },
+    });
+  }
+
   return ticketId;
 }
 
@@ -171,6 +182,15 @@ app.post("/api/tickets/:id/close", async (req, res) => {
   const { closedBy } = req.body || {};
   try {
     await dbService.updateTicketStatus(id, "CLOSED", closedBy || "Portal");
+
+    // Log closure in Bitacora
+    await dbService.addTicketComment(id, {
+      from: "System",
+      body: `Ticket cerrado el ${new Date().toLocaleString("es-CL")} por ${
+        closedBy || "Portal"
+      }`,
+      aiAnalysis: { isSystemLog: true },
+    });
     console.log(
       `[API] Ticket ${id} manually closed by ${closedBy || "Portal"}.`
     );
