@@ -22,6 +22,7 @@ module.exports = {
     }
 
     const categories = rules.getCategories();
+    const rulesDetail = rules.rulesDetail || "";
 
     const prompt = `
       Actúa como un asistente de triaje de correos para "Hits Corredora de Seguros". Analiza el siguiente correo electrónico.
@@ -30,12 +31,16 @@ module.exports = {
       Asunto: ${subject}
       Cuerpo: ${body}
       
+      Reglas de Asignación:
+      ${rulesDetail}
+
       Tus tareas:
-      1. Clasifica el correo en una de estas categorías: [${categories}].
-         - Si el asunto contiene la palabra "demo" o "demostración", clasifícalo como 'Demo'.
-         - Si el usuario menciona explícitamente que es una "prueba", "test", o "validación", clasifícalo como 'Prueba'.
-         - Si tiene que ver explícitamente con "RC Médica", "Responsabilidad Civil", "Mala Praxis", clasifícalo como 'Responsabilidad Civil Médica'.
-         - Cualquier otro tipo de seguro (Auto, Hogar, Vida, Incendio, etc) clasifícalo como 'Otros Seguros'.
+      1. Clasifica el correo en EXACTAMENTE una de estas categorías: [${categories}].
+         - Prioriza "Cobranza" si habla de pagos, facturas, deudas.
+         - Prioriza "Certificados..." si pide emitir un certificado.
+         - Prioriza "Cotizaciones" si es una solicitud de nuevo seguro o RCM.
+         - Si es "Consulta general", decide entre Rodrigo (Operativo/General) o Juan Pablo (Comercial/Grandes Clientes) según el tono y contenido. Si dudas, usa "Consultas generales (Rodrigo)".
+      
       2. Determina la urgencia (Baja, Media, Alta).
       3. Genera un resumen ejecutivo de 1 linea.
       4. Analiza el sentimiento (Positivo, Negativo, Neutral).

@@ -2,9 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 // User database with passwords
 const USERS = [
+  // Managers
   { name: 'Edmundo Spohr', email: 'edmundo@spohr.cl', password: 'hits2025', role: 'manager' },
   { name: 'Rodrigo Muñoz', email: 'rodrigo.munoz@hitscorredoraseguros.cl', password: 'hits2025', role: 'manager' },
   { name: 'Juan Pablo Carmona', email: 'juan.carmona@hitscorredoraseguros.cl', password: 'hits2025', role: 'manager' },
+  // Agents
+  { name: 'Rosa Valera', email: 'rosa.valera@hitscorredoraseguros.cl', password: 'hits2025', role: 'agent' },
+  { name: 'Marcela Aránguiz', email: 'marcela.aranguiz@hitscorredoraseguros.cl', password: 'hits2025', role: 'agent' },
+  { name: 'Eddis Rodriguez', email: 'eddis.rodriguez@hitscorredoraseguros.cl', password: 'hits2025', role: 'agent' },
   { name: 'Demo Gestor', email: 'demo@hitscorredoraseguros.cl', password: 'hits2025', role: 'agent' }
 ];
 
@@ -29,6 +34,9 @@ function App() {
 
   // Modal State
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [ticketComments, setTicketComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+  const [commentsLoading, setCommentsLoading] = useState(false);
 
   // Sorting State
   const [sortField, setSortField] = useState('createdAt');
@@ -61,7 +69,12 @@ function App() {
     try {
       const res = await fetch('/api/tickets');
       const data = await res.json();
-      setTickets(data);
+      if (Array.isArray(data)) {
+        setTickets(data);
+      } else {
+        console.error("API returned non-array for tickets:", data);
+        setTickets([]);
+      }
     } catch (err) {
       console.error("Failed to fetch tickets", err);
     }
@@ -77,7 +90,14 @@ function App() {
       try {
         const res = await fetch('/api/tickets');
         const data = await res.json();
-        if (isMounted) setTickets(data);
+        if (isMounted) {
+          if (Array.isArray(data)) {
+            setTickets(data);
+          } else {
+            console.error("Initial fetch returned non-array:", data);
+            setTickets([]);
+          }
+        }
       } catch (err) {
         console.error("Failed to fetch tickets", err);
       } finally {
@@ -99,6 +119,48 @@ function App() {
     };
   }, [user]);
 
+  // Fetch comments when ticket selected
+  useEffect(() => {
+    if (!selectedTicket) {
+      setTicketComments([]);
+      return;
+    }
+    const fetchComments = async () => {
+      setCommentsLoading(true);
+      try {
+        const res = await fetch(`/api/tickets/${selectedTicket.id}/comments`);
+        const data = await res.json();
+        setTicketComments(data);
+      } catch (e) {
+        console.error("Error fetching comments", e);
+      } finally {
+        setCommentsLoading(false);
+      }
+    };
+    fetchComments();
+  }, [selectedTicket]);
+
+  // Submit comment
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim() || !selectedTicket) return;
+
+    try {
+      await fetch(`/api/tickets/${selectedTicket.id}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: user.email, body: newComment })
+      });
+      setNewComment('');
+      // Refresh comments
+      const res = await fetch(`/api/tickets/${selectedTicket.id}/comments`);
+      const data = await res.json();
+      setTicketComments(data);
+    } catch (e) {
+      console.error("Error submitting comment", e);
+    }
+  };
+
   // Close ticket manually
   const closeTicket = async (ticketId) => {
     try {
@@ -115,7 +177,7 @@ function App() {
   };
 
   // Get unique assignees for filter
-  const uniqueAssignees = [...new Set(tickets.map(t => t.assignedTo))];
+  const uniqueAssignees = [...new Set(tickets.map(t => t.assignedTo).filter(Boolean))];
 
   // Filter and sort logic
   const filteredTickets = tickets
@@ -173,7 +235,7 @@ function App() {
   // Login Screen
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-blue-700">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-900 to-blue-700">
         <div className="bg-white p-8 rounded-xl shadow-2xl w-96">
           <div className="flex flex-col items-center mb-6">
             <img src="/logo-hits.png" alt="Hits Corredora" className="h-20 mb-4" />
@@ -419,7 +481,7 @@ function App() {
       {/* Ticket Detail Modal */}
       {selectedTicket && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
             {/* Modal Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <div>
@@ -435,55 +497,111 @@ function App() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-4 overflow-y-auto flex-1">
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <p className="text-xs text-gray-500 uppercase">Categoría</p>
-                  <p className="font-medium">{selectedTicket.category}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase">Urgencia</p>
-                  <p className="font-medium">{selectedTicket.urgency}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase">Asignado a</p>
-                  <p className="font-medium">{selectedTicket.assignedTo}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase">Estado</p>
-                  <p className="font-medium">{selectedTicket.status === 'CLOSED' ? 'Resuelto' : 'Abierto'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase">Remitente</p>
-                  <p className="font-medium">{selectedTicket.from}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase">Creado</p>
-                  <p className="font-medium">{new Date(selectedTicket.createdAt).toLocaleString('es-CL')}</p>
-                </div>
-                {selectedTicket.closedAt && (
-                  <div className="col-span-2 bg-green-50 p-3 rounded-lg">
-                    <p className="text-xs text-gray-500 uppercase">Resuelto</p>
-                    <p className="font-medium text-green-800">
-                      Por: {selectedTicket.closedBy || 'Sistema'}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {new Date(selectedTicket.closedAt).toLocaleString('es-CL')}
-                    </p>
+            <div className="p-4 overflow-y-auto flex-1 grid md:grid-cols-2 gap-6">
+              
+              {/* Left Column: Details */}
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Categoría</p>
+                    <p className="font-medium">{selectedTicket.category}</p>
                   </div>
-                )}
-              </div>
-
-              <div className="mb-4">
-                <p className="text-xs text-gray-500 uppercase mb-2">Resumen IA</p>
-                <p className="text-gray-800 bg-blue-50 p-3 rounded-lg">{selectedTicket.summary}</p>
-              </div>
-
-              <div>
-                <p className="text-xs text-gray-500 uppercase mb-2">Contenido Original</p>
-                <div className="bg-gray-50 p-3 rounded-lg text-sm text-gray-700 whitespace-pre-wrap max-h-60 overflow-y-auto">
-                  {selectedTicket.emailBody || 'No disponible'}
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Urgencia</p>
+                    <p className="font-medium">{selectedTicket.urgency}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Asignado a</p>
+                    <p className="font-medium">{selectedTicket.assignedTo}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Estado</p>
+                    <p className="font-medium">{selectedTicket.status === 'CLOSED' ? 'Resuelto' : 'Abierto'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Remitente</p>
+                    <p className="font-medium truncate" title={selectedTicket.from}>{selectedTicket.from}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Creado</p>
+                    <p className="font-medium">{new Date(selectedTicket.createdAt).toLocaleString('es-CL')}</p>
+                  </div>
+                  {selectedTicket.closedAt && (
+                    <div className="col-span-2 bg-green-50 p-3 rounded-lg">
+                      <p className="text-xs text-gray-500 uppercase">Resuelto</p>
+                      <p className="font-medium text-green-800">
+                        Por: {selectedTicket.closedBy || 'Sistema'}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {new Date(selectedTicket.closedAt).toLocaleString('es-CL')}
+                      </p>
+                    </div>
+                  )}
                 </div>
+
+                <div>
+                  <p className="text-xs text-gray-500 uppercase mb-2">Resumen IA</p>
+                  <p className="text-gray-800 bg-blue-50 p-3 rounded-lg">{selectedTicket.summary}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-500 uppercase mb-2">Contenido Original</p>
+                  <div className="bg-gray-50 p-3 rounded-lg text-sm text-gray-700 whitespace-pre-wrap max-h-40 overflow-y-auto border border-gray-200">
+                    {selectedTicket.emailBody || 'No disponible'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Bitácora & Comments */}
+              <div className="flex flex-col h-full">
+                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span className="bg-yellow-100 text-yellow-800 p-1 rounded">📋</span> Bitácora y Comentarios
+                </h3>
+                
+                <div className="flex-1 bg-gray-50 rounded-xl border border-gray-200 p-3 overflow-y-auto mb-3 space-y-3 min-h-[200px]">
+                  {commentsLoading ? (
+                    <p className="text-center text-gray-400 text-sm py-4">Cargando bitácora...</p>
+                  ) : ticketComments.length === 0 ? (
+                    <p className="text-center text-gray-400 text-sm py-4">No hay registros en la bitácora.</p>
+                  ) : (
+                    ticketComments.map((comment, idx) => (
+                      <div key={idx} className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                        <div className="flex justify-between items-start mb-1">
+                          <span className="font-semibold text-xs text-blue-900">{comment.from}</span>
+                          <span className="text-[10px] text-gray-400">
+                            {new Date(comment.createdAt).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'})}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700 whitespace-pre-wrap">{comment.body}</p>
+                        {comment.aiAnalysis && !comment.aiAnalysis.isManual && (
+                           <div className="mt-2 text-xs bg-gray-100 p-2 rounded text-gray-600">
+                             🤖 <strong>IA:</strong> {comment.aiAnalysis.summary || "Respuesta procesada"}
+                           </div>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Add Comment Input */}
+                <form onSubmit={handleCommentSubmit} className="mt-auto">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Escribe un comentario..."
+                      className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <button 
+                      type="submit"
+                      disabled={!newComment.trim()}
+                      className="absolute right-1 top-1 bottom-1 px-3 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700 disabled:bg-gray-300 transition"
+                    >
+                      Enviar
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
 

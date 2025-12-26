@@ -134,6 +134,7 @@ module.exports = {
           assigned_to: "admin@demo.com",
           createdAt: new Date().toISOString(),
           closedAt: null,
+          comments: [],
         },
       ];
     }
@@ -156,6 +157,23 @@ module.exports = {
       createdAt: row.created_at,
       closedAt: row.closed_at,
       closedBy: row.closed_by,
+    }));
+  },
+
+  getTicketComments: async (ticketId) => {
+    if (!process.env.DATABASE_URL) return [];
+    const query = `
+      SELECT * FROM ticket_comments 
+      WHERE ticket_id = $1 
+      ORDER BY created_at ASC
+    `;
+    const res = await pool.query(query, [ticketId]);
+    return res.rows.map((r) => ({
+      id: r.id,
+      from: r.from_address,
+      body: r.body,
+      aiAnalysis: r.ai_analysis,
+      createdAt: r.created_at,
     }));
   },
 };

@@ -181,6 +181,36 @@ app.post("/api/tickets/:id/close", async (req, res) => {
   }
 });
 
+// Get comments
+app.get("/api/tickets/:id/comments", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const comments = await dbService.getTicketComments(id);
+    res.json(comments);
+  } catch (e) {
+    console.error(`[API] Error fetching comments for ${id}:`, e);
+    res.json([]);
+  }
+});
+
+// Add manual comment
+app.post("/api/tickets/:id/comments", async (req, res) => {
+  const { id } = req.params;
+  const { from, body } = req.body;
+  try {
+    await dbService.addTicketComment(id, {
+      from: from || "Portal User",
+      body: body,
+      aiAnalysis: { isManual: true },
+    });
+    console.log(`[API] Comment added to ticket ${id} by ${from}`);
+    res.json({ success: true });
+  } catch (e) {
+    console.error(`[API] Error adding comment to ${id}:`, e);
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // --- FALLBACK (SPA) ---
 // Any request that doesn't match an API route returns index.html
 app.get(/.*/, (req, res) => {

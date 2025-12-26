@@ -5,12 +5,27 @@
 module.exports = {
   // Mapeo Categoría -> Email del Responsable
   assignments: {
-    "Responsabilidad Civil Médica": "rodrigo.munoz@hitscorredoraseguros.cl",
-    "Otros Seguros": "juan.carmona@hitscorredoraseguros.cl",
+    "Certificados de póliza vigente": "rosa.valera@hitscorredoraseguros.cl",
+    Cobranza: "marcela.aranguiz@hitscorredoraseguros.cl",
+    Cotizaciones: "eddis.rodriguez@hitscorredoraseguros.cl", // Default quote handler
+    "Responsabilidad Civil Médica": "eddis.rodriguez@hitscorredoraseguros.cl", // Specific Quote type
+    "Consultas generales (Rodrigo)": "rodrigo.munoz@hitscorredoradeseguros.cl",
+    "Consultas generales (Juan Pablo)":
+      "juan.carmona@hitscorredoradeseguros.cl",
     Prueba: "edmundo@spohr.cl",
     Demo: "demo@hitscorredoraseguros.cl",
-    Otro: "juan.carmona@hitscorredoraseguros.cl", // Default fallback
+    Otro: "rodrigo.munoz@hitscorredoradeseguros.cl", // Default fallback
   },
+
+  // Observaciones detalladas para el prompt de IA
+  rulesDetail: `
+    - "Certificados de póliza vigente" y seguros NO RCM -> Rosa Valera. Plazo 4 días hábiles.
+    - "Cobranza" -> Marcela Aránguiz. Pagos de médicos.
+    - "Cotizaciones" (RCM o Venta) -> Eddis Rodriguez.
+    - "Consultas generales" o casos no definidos -> Rodrigo Muñoz (Default operational) o Juan Pablo Carmona (Comercial / Grandes Clientes).
+    - "Prueba" -> Correos de prueba.
+    - "Demo" -> Correos de demostración.
+  `,
 
   // Categorías válidas para pasarle al prompt de Gemini
   getCategories: function () {
