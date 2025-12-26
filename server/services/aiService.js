@@ -116,8 +116,30 @@ module.exports = {
         .trim();
       return JSON.parse(jsonStr);
     } catch (error) {
-      console.error("Error analyzing reply:", error);
-      return { isResolved: false };
+      console.error("Error analyzing reply (Gemini):", error);
+
+      // Fallback: Keyword Analysis
+      const lowerBody = (body || "").toLowerCase();
+      const keywords = [
+        "resuelto",
+        "cerrado",
+        "solucionado",
+        "cerrar ticket",
+        "finalizado",
+        "ya está",
+      ];
+      const isResolved = keywords.some((k) => lowerBody.includes(k));
+
+      if (isResolved) {
+        console.log(
+          "[AI Service] Fallback: Detected resolution keyword manually."
+        );
+      }
+
+      return {
+        isResolved: isResolved,
+        reason: isResolved ? "Fallback manual (Keyword match)" : null,
+      };
     }
   },
 };
