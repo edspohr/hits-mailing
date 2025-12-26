@@ -58,7 +58,8 @@ async function processNewEmail(email) {
     await dbService.addTicketComment(ticketId, {
       from: "System",
       body: `Ticket ${analysis.category} creado el ${new Date().toLocaleString(
-        "es-CL"
+        "es-CL",
+        { timeZone: "America/Santiago" }
       )}`,
       aiAnalysis: { isSystemLog: true },
     });
@@ -96,6 +97,16 @@ async function processReplyEmail(email, ticketId) {
       `[Worker] *** CLOSING Ticket ${ticketId} (AI detected resolution) ***`
     );
     await dbService.updateTicketStatus(ticketId, "CLOSED", email.fromAddress);
+
+    // Log closure in Bitacora (Worker)
+    await dbService.addTicketComment(ticketId, {
+      from: "System",
+      body: `Ticket cerrado el ${new Date().toLocaleString("es-CL", {
+        timeZone: "America/Santiago",
+      })} por ${email.fromAddress}`,
+      aiAnalysis: { isSystemLog: true },
+    });
+
     console.log(`[Worker] Ticket ${ticketId} closed by ${email.fromAddress}.`);
   } else {
     console.log(
@@ -195,9 +206,9 @@ app.post("/api/tickets/:id/close", async (req, res) => {
     // Log closure in Bitacora
     await dbService.addTicketComment(id, {
       from: "System",
-      body: `Ticket cerrado el ${new Date().toLocaleString("es-CL")} por ${
-        closedBy || "Portal"
-      }`,
+      body: `Ticket cerrado el ${new Date().toLocaleString("es-CL", {
+        timeZone: "America/Santiago",
+      })} por ${closedBy || "Portal"}`,
       aiAnalysis: { isSystemLog: true },
     });
     console.log(
