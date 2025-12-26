@@ -24,10 +24,16 @@ app.use(express.static(clientDistPath));
 async function processNewEmail(email) {
   console.log(`Processing NEW email: ${email.subject}`);
 
+  /* 
+   Prepare Body Content (Text or HTML)
+   Some clients send HTML only. fallback to HTML if text is empty.
+  */
+  const bodyContent = email.text || email.html || "(Sin contenido)";
+
   // 1. Analyze with AI
   const analysis = await aiService.analyzeNewTicket(
     email.subject,
-    email.text,
+    bodyContent,
     email.from
   );
   console.log("AI Analysis:", analysis);
@@ -45,7 +51,7 @@ async function processNewEmail(email) {
     summary: analysis.summary,
     sentiment: analysis.sentiment,
     assignedTo: assigneeEmail,
-    emailBody: email.text,
+    emailBody: bodyContent,
   };
 
   const ticketId = await dbService.createTicket(ticketData);
@@ -71,12 +77,11 @@ async function processNewEmail(email) {
 async function processReplyEmail(email, ticketId) {
   console.log(`[Worker] Processing REPLY for Ticket ${ticketId}`);
   console.log(`[Worker] Reply from: ${email.fromAddress}`);
-  console.log(
-    `[Worker] Body preview: "${(email.text || "").substring(0, 100)}..."`
-  );
+  const bodyContent = email.text || email.html || "";
+  console.log(`[Worker] Body preview: "${bodyContent.substring(0, 100)}..."`);
 
   // 1. Analyze for Closure
-  const analysis = await aiService.analyzeReply(email.text);
+  const analysis = await aiService.analyzeReply(bodyContent);
   console.log(
     `[Worker] AI Analysis: isResolved=${analysis.isResolved}, reason="${
       analysis.reason || "N/A"
@@ -86,7 +91,7 @@ async function processReplyEmail(email, ticketId) {
   // 2. Add as Comment to DB
   await dbService.addTicketComment(ticketId, {
     from: email.fromAddress,
-    body: email.text,
+    body: bodyContent,
     aiAnalysis: analysis,
   });
   console.log(`[Worker] Comment added to Ticket ${ticketId}`);
