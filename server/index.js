@@ -149,8 +149,9 @@ async function runWorkerCycle() {
           `[Worker] Failed to verify/process email ${email.uid}:`,
           err
         );
-        // Optional: Mark as read to avoid infinite loop matching the same bad email?
-        // For now, just log and skip. Next cycle will retry manually or stay stuck but won't crash entire batch.
+        // CRITICAL: Mark as read to avoid infinite blocking loop.
+        // If an email causes a crash/error, we must skip it to process newer emails.
+        processedUids.push(email.uid);
       }
     }
 
