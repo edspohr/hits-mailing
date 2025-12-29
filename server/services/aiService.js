@@ -36,10 +36,15 @@ module.exports = {
 
       Tus tareas:
       1. Clasifica el correo en EXACTAMENTE una de estas categorías: [${categories}].
-         - Prioriza "Cobranza" si habla de pagos, facturas, deudas.
-         - Prioriza "Certificados..." si pide emitir un certificado.
-         - Prioriza "Cotizaciones" si es una solicitud de nuevo seguro o RCM.
-         - Si es "Consulta general", decide entre Rodrigo (Operativo/General) o Juan Pablo (Comercial/Grandes Clientes) según el tono y contenido. Si dudas, usa "Consultas generales (Rodrigo)".
+         - SI pide un certificado:
+            - ¿Es de Responsabilidad Civil Médica (RCM)? -> Usa "Certificados RCM"
+            - ¿Es de otro seguro? -> Usa "Certificados No RCM"
+         - SI habla de Mapfre o Aspor en contexto comercial/RCM -> Usa "RC Médica Mapfre/Aspor"
+         - SI es cobranza/pagos -> "Cobranza"
+         - SI es cotización nueva -> "Cotizaciones"
+         - SI es consulta general:
+            - ¿Es un cliente grande / tema comercial importante? -> "Consultas generales (Juan Pablo)"
+            - ¿Es operativo o duda general? -> "Consultas generales (Rodrigo)"
       
       2. Determina la urgencia (Baja, Media, Alta).
       3. Genera un resumen ejecutivo de 1 linea.

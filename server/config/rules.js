@@ -5,10 +5,11 @@
 module.exports = {
   // Mapeo Categoría -> Email del Responsable
   assignments: {
-    "Certificados de póliza vigente": "rosa.valera@hitscorredoraseguros.cl",
+    "Certificados RCM": "rosa.valera@hitscorredoraseguros.cl",
+    "Certificados No RCM": "eddis.rodriguez@hitscorredoraseguros.cl",
     Cobranza: "marcela.aranguiz@hitscorredoraseguros.cl",
-    Cotizaciones: "eddis.rodriguez@hitscorredoraseguros.cl", // Default quote handler
-    "Responsabilidad Civil Médica": "eddis.rodriguez@hitscorredoraseguros.cl", // Specific Quote type
+    Cotizaciones: "eddis.rodriguez@hitscorredoraseguros.cl",
+    "RC Médica Mapfre/Aspor": "ivana.acosta@hitscorredoradeseguros.cl",
     "Consultas generales (Rodrigo)": "rodrigo.munoz@hitscorredoradeseguros.cl",
     "Consultas generales (Juan Pablo)":
       "juan.carmona@hitscorredoradeseguros.cl",
@@ -19,12 +20,14 @@ module.exports = {
 
   // Observaciones detalladas para el prompt de IA
   rulesDetail: `
-    - "Certificados de póliza vigente" y seguros NO RCM -> Rosa Valera. Plazo 4 días hábiles.
-    - "Cobranza" -> Marcela Aránguiz. Pagos de médicos.
-    - "Cotizaciones" (RCM o Venta) -> Eddis Rodriguez.
-    - "Consultas generales" o casos no definidos -> Rodrigo Muñoz (Default operational) o Juan Pablo Carmona (Comercial / Grandes Clientes).
-    - "Prueba" -> Correos de prueba (edmundo@spohr.cl).
-    - "Demo" -> Correos de demostración (edmundo@spohr.cl).
+    1. "Certificados RCM" -> Rosa Valera. Pólizas vigentes de Responsabilidad Civil Médica.
+    2. "Certificados No RCM" -> Eddis Rodriguez. Pólizas de OTROS seguros (Auto, Hogar, etc) que NO sean RCM.
+    3. "Cobranza" -> Marcela Aránguiz. Pagos, facturación, deudas.
+    4. "Cotizaciones" -> Eddis Rodriguez. Solicitudes de nuevos seguros o asesoría.
+    5. "RC Médica Mapfre/Aspor" -> Ivana Acosta. Específicamente temas comerciales de Mapfre o Aspor en RC Médica.
+    6. "Consultas generales (Juan Pablo)" -> Temas comerciales de potenciales clientes de gran tamaño.
+    7. "Consultas generales (Rodrigo)" -> Consultas generales, operativas o casos no definidos.
+    8. "Prueba" o "Demo" -> Edmundo Spohr. Si dice explícitamente "prueba" o "demo".
   `,
 
   // Categorías válidas para pasarle al prompt de Gemini
