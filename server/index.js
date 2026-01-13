@@ -68,17 +68,14 @@ async function processNewEmail(email) {
   // 4. Forward Email
   await emailService.forwardTicket(email, ticketId, assigneeEmail, analysis);
 
-  // 5. Bitacora Log (for Demo)
-  if (analysis.category === "Demo" || analysis.category === "Prueba") {
-    await dbService.addTicketComment(ticketId, {
-      from: "System",
-      body: `Ticket ${analysis.category} creado el ${new Date().toLocaleString(
-        "es-CL",
-        { timeZone: "America/Santiago" }
-      )}`,
-      aiAnalysis: { isSystemLog: true },
-    });
-  }
+  // 5. Bitacora Log (Initial Entry for ALL tickets)
+  await dbService.addTicketComment(ticketId, {
+    from: "System",
+    body: `Ticket creado el ${new Date().toLocaleString("es-CL", {
+      timeZone: "America/Santiago",
+    })}. Asignado a: ${assigneeEmail}`,
+    aiAnalysis: { isSystemLog: true },
+  });
 
   return ticketId;
 }

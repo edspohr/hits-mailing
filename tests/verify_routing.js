@@ -5,29 +5,25 @@ console.log("--- Verifying Email Routing Rules ---");
 
 const expectedMappings = [
   {
-    category: "Certificados RCM",
+    category: "Certificados RCM / Término",
     email: "rosa.valera@hitscorredoraseguros.cl",
   },
   {
-    category: "Certificados No RCM",
+    category: "Cotizaciones Generales / No RCM",
     email: "eddis.rodriguez@hitscorredoraseguros.cl",
   },
   { category: "Cobranza", email: "marcela.aranguiz@hitscorredoraseguros.cl" },
-  {
-    category: "Cotizaciones",
-    email: "eddis.rodriguez@hitscorredoraseguros.cl",
-  },
   {
     category: "RC Médica Mapfre/Aspor",
     email: "ivana.acosta@hitscorredoradeseguros.cl",
   },
   {
-    category: "Consultas generales (Rodrigo)",
-    email: "rodrigo.munoz@hitscorredoradeseguros.cl",
+    category: "Grandes Clientes / Riesgos",
+    email: "juan.carmona@hitscorredoradeseguros.cl",
   },
   {
-    category: "Consultas generales (Juan Pablo)",
-    email: "juan.carmona@hitscorredoradeseguros.cl",
+    category: "Consultas Generales",
+    email: "rodrigo.munoz@hitscorredoradeseguros.cl",
   },
   { category: "Prueba", email: "edmundo@spohr.cl" },
   { category: "Demo", email: "edmundo@spohr.cl" },

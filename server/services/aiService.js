@@ -36,16 +36,16 @@ module.exports = {
 
       Tus tareas:
       1. Clasifica el correo en EXACTAMENTE una de estas categorías: [${categories}].
-         - SI pide un certificado:
-            - ¿Es de Responsabilidad Civil Médica (RCM)? -> Usa "Certificados RCM"
-            - ¿Es de otro seguro? -> Usa "Certificados No RCM"
-         - SI habla de Mapfre o Aspor en contexto comercial/RCM -> Usa "RC Médica Mapfre/Aspor"
-         - SI es cobranza/pagos -> "Cobranza"
-         - SI es cotización nueva -> "Cotizaciones"
-         - SI es consulta general:
-            - ¿Es un cliente grande / tema comercial importante? -> "Consultas generales (Juan Pablo)"
-            - ¿Es operativo o duda general? -> "Consultas generales (Rodrigo)"
-      
+         Lógica de decisión prioritaria:
+         - ¿Dice explícitamente "Prueba" o "Demo"? -> "Prueba" o "Demo".
+         - ¿Solicita "Término de Servicio" o Certificado RCM? -> "Certificados RCM / Término"
+         - ¿Pide "Status" (refiriéndose a pagos) o es tema de cobranza/facturas? -> "Cobranza"
+         - ¿Es RC Médica de "Mapfre" o "Aspor"? -> "RC Médica Mapfre/Aspor"
+         - ¿Menciona "Incendio", "Sismo", "Garantía" o parece un gran cliente comercial? -> "Grandes Clientes / Riesgos"
+         - ¿Es una cotización?
+            - Si NO es RCM (es auto, hogar, etc) -> "Cotizaciones Generales / No RCM"
+         - Si no calza con nada anterior -> "Consultas Generales"
+
       2. Determina la urgencia (Baja, Media, Alta).
       3. Genera un resumen ejecutivo de 1 linea.
       4. Analiza el sentimiento (Positivo, Negativo, Neutral).

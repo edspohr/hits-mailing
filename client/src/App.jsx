@@ -284,7 +284,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 p-4 sticky top-0 z-10">
+      <header className="glass shadow-lg shadow-blue-900/5 p-4 sticky top-0 z-20 transition-all duration-300">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
             <img src="/logo-hits.png" alt="Hits" className="h-10" />
@@ -307,27 +307,27 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto p-4 sm:p-6">
+      <main className="container mx-auto p-4 sm:p-6 animate-fade-in-up">
         {/* Stats Badges */}
         <div className="flex gap-4 mb-6">
-          <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg flex items-center gap-2">
-            <span className="text-2xl font-bold">{openCount}</span>
-            <span className="text-sm">Abiertos</span>
+          <div className="bg-white shadow-md shadow-blue-900/5 text-blue-900 px-5 py-3 rounded-xl flex items-center gap-3 border border-blue-50 transform hover:-translate-y-1 transition-transform duration-300">
+            <span className="text-3xl font-bold">{openCount}</span>
+            <span className="text-sm font-medium text-blue-600/80">Abiertos</span>
           </div>
-          <div className="bg-green-100 text-green-800 px-4 py-2 rounded-lg flex items-center gap-2">
-            <span className="text-2xl font-bold">{closedCount}</span>
-            <span className="text-sm">Resueltos</span>
+          <div className="bg-white shadow-md shadow-green-900/5 text-green-900 px-5 py-3 rounded-xl flex items-center gap-3 border border-green-50 transform hover:-translate-y-1 transition-transform duration-300 delay-100">
+            <span className="text-3xl font-bold">{closedCount}</span>
+            <span className="text-sm font-medium text-green-600/80">Resueltos</span>
           </div>
-          <div className="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg flex items-center gap-2">
-            <span className="text-2xl font-bold">{tickets.length}</span>
-            <span className="text-sm">Total</span>
+          <div className="bg-white shadow-md shadow-gray-900/5 text-gray-700 px-5 py-3 rounded-xl flex items-center gap-3 border border-gray-50 transform hover:-translate-y-1 transition-transform duration-300 delay-200">
+            <span className="text-3xl font-bold">{tickets.length}</span>
+            <span className="text-sm font-medium text-gray-500/80">Total</span>
           </div>
         </div>
 
         {loading ? (
           <div className="text-center py-20 text-gray-500">Cargando tickets...</div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl shadow-blue-900/5 border border-white/50 overflow-hidden animate-fade-in-up delay-100">
             {/* Toolbar */}
             <div className="p-4 border-b border-gray-200 bg-gray-50 flex flex-wrap gap-4 items-center justify-between">
               {/* Search */}
@@ -398,8 +398,12 @@ function App() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {filteredTickets.map(ticket => (
-                    <tr key={ticket.id} className="hover:bg-blue-50 transition-colors">
+                  {filteredTickets.map((ticket, index) => (
+                    <tr 
+                      key={ticket.id} 
+                      className={`hover:bg-blue-50/50 transition-all duration-200 cursor-pointer group ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}`}
+                      onClick={() => setSelectedTicket(ticket)}
+                    >
                       <td className="py-3 px-4 font-mono text-xs text-gray-500">#{ticket.id}</td>
                       <td className="py-3 px-4">
                         <div className="font-medium text-gray-900">{ticket.summary}</div>
@@ -432,9 +436,9 @@ function App() {
                       <td className="py-3 px-4">
                         <button 
                           onClick={() => setSelectedTicket(ticket)}
-                          className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                          className="text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 duration-200"
                         >
-                          Ver Detalle
+                          Ver Detalle →
                         </button>
                       </td>
                     </tr>
@@ -480,8 +484,8 @@ function App() {
 
       {/* Ticket Detail Modal */}
       {selectedTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="glass-modal rounded-2xl shadow-2xl shadow-blue-900/20 max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col transform transition-all animate-fade-in-up">
             {/* Modal Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <div>
@@ -512,7 +516,7 @@ function App() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 uppercase">Asignado a</p>
-                    <p className="font-medium">{selectedTicket.assignedTo}</p>
+                    <p className="font-medium truncate" title={selectedTicket.assignedTo}>{selectedTicket.assignedTo}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 uppercase">Estado</p>
