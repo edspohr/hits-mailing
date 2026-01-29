@@ -34,7 +34,7 @@ async function processNewEmail(email) {
   const analysis = await aiService.analyzeNewTicket(
     email.subject,
     bodyContent,
-    email.from
+    email.from,
   );
   console.log("AI Analysis:", analysis);
 
@@ -91,7 +91,7 @@ async function processReplyEmail(email, ticketId) {
   console.log(
     `[Worker] AI Analysis: isResolved=${analysis.isResolved}, reason="${
       analysis.reason || "N/A"
-    }"`
+    }"`,
   );
 
   // 2. Add as Comment to DB
@@ -105,7 +105,7 @@ async function processReplyEmail(email, ticketId) {
   // 3. Close if Resolved
   if (analysis.isResolved) {
     console.log(
-      `[Worker] *** CLOSING Ticket ${ticketId} (AI detected resolution) ***`
+      `[Worker] *** CLOSING Ticket ${ticketId} (AI detected resolution) ***`,
     );
     await dbService.updateTicketStatus(ticketId, "CLOSED", email.fromAddress);
 
@@ -121,12 +121,12 @@ async function processReplyEmail(email, ticketId) {
     console.log(`[Worker] Ticket ${ticketId} closed by ${email.fromAddress}.`);
   } else {
     console.log(
-      `[Worker] Ticket ${ticketId} remains OPEN (AI did not detect resolution).`
+      `[Worker] Ticket ${ticketId} remains OPEN (AI did not detect resolution).`,
     );
   }
 }
 
-async function runWorkerCycle() {
+async function checkEmails() {
   console.log("--- [Worker] Checking for new emails ---");
   try {
     const emails = await emailService.fetchUnreadEmails();
@@ -140,7 +140,7 @@ async function runWorkerCycle() {
       try {
         const ticketId = emailService.parseTicketId(email.subject);
         console.log(
-          `[Worker] Parsed Ticket ID: ${ticketId || "NONE (new ticket)"}`
+          `[Worker] Parsed Ticket ID: ${ticketId || "NONE (new ticket)"}`,
         );
 
         if (ticketId) {
@@ -153,7 +153,7 @@ async function runWorkerCycle() {
       } catch (err) {
         console.error(
           `[Worker] Failed to verify/process email ${email.uid}:`,
-          err
+          err,
         );
         // CRITICAL: Mark as read to avoid infinite blocking loop.
         // If an email causes a crash/error, we must skip it to process newer emails.
@@ -167,7 +167,10 @@ async function runWorkerCycle() {
   } catch (error) {
     console.error("[Worker] Error in main loop:", error);
   }
+}
 
+async function runWorkerCycle() {
+  await checkEmails();
   setTimeout(runWorkerCycle, POLL_INTERVAL);
 }
 
@@ -224,7 +227,7 @@ app.post("/api/tickets/:id/close", async (req, res) => {
       aiAnalysis: { isSystemLog: true },
     });
     console.log(
-      `[API] Ticket ${id} manually closed by ${closedBy || "Portal"}.`
+      `[API] Ticket ${id} manually closed by ${closedBy || "Portal"}.`,
     );
     res.json({ success: true, message: "Ticket closed" });
   } catch (e) {
@@ -259,6 +262,18 @@ app.post("/api/tickets/:id/comments", async (req, res) => {
     res.json({ success: true });
   } catch (e) {
     console.error(`[API] Error adding comment to ${id}:`, e);
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// CRON Endpoint for Serverless triggering
+app.get("/api/cron/process-emails", async (req, res) => {
+  console.log("[API] Cron Triggered: Processing emails...");
+  try {
+    await checkEmails();
+    res.json({ success: true, message: "Emails processed successfully" });
+  } catch (e) {
+    console.error("[API] Error in cron trigger:", e);
     res.status(500).json({ success: false, error: e.message });
   }
 });
