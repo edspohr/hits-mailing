@@ -5,13 +5,13 @@
 module.exports = {
   // Mapeo Categoría -> Email del Responsable
   assignments: {
-    "Certificados RCM / Término": "rosa.valera@hitscorredoradeseguros.cl",
+    "Certificados RCM / Término": "rosa.valera@hitscorredoraseguros.cl",
     "Cotizaciones Generales / No RCM":
-      "eddis.rodriguez@hitscorredoradeseguros.cl",
-    Cobranza: "marcela.aranguiz@hitscorredoradeseguros.cl",
-    "RC Médica Mapfre/Aspor": "ivana.acosta@hitscorredoradeseguros.cl",
-    "Grandes Clientes / Riesgos": "juan.carmona@hitscorredoradeseguros.cl",
-    "Consultas Generales": "rodrigo.munoz@hitscorredoradeseguros.cl",
+      "eddis.rodriguez@hitscorredoraseguros.cl",
+    Cobranza: "marcela.aranguiz@hitscorredoraseguros.cl",
+    "RC Médica Mapfre/Aspor": "ivana.acosta@hitscorredoraseguros.cl",
+    "Grandes Clientes / Riesgos": "juan.carmona@hitscorredoraseguros.cl",
+    "Consultas Generales": "rodrigo.munoz@hitscorredoraseguros.cl",
     Prueba: "edmundo@spohr.cl",
     Demo: "edmundo@spohr.cl",
     Otro: "rodrigo.munoz@hitscorredoradeseguros.cl", // Default fallback
