@@ -5,10 +5,10 @@
 module.exports = {
   // Mapeo Categoría -> Email del Responsable
   assignments: {
-    "Certificados RCM / Término": "rosa.valera@hitscorredoraseguros.cl",
+    "Certificados RCM / Término": "rosa.valera@hitscorredoradeseguros.cl",
     "Cotizaciones Generales / No RCM":
-      "eddis.rodriguez@hitscorredoraseguros.cl",
-    Cobranza: "marcela.aranguiz@hitscorredoraseguros.cl",
+      "eddis.rodriguez@hitscorredoradeseguros.cl",
+    Cobranza: "marcela.aranguiz@hitscorredoradeseguros.cl",
     "RC Médica Mapfre/Aspor": "ivana.acosta@hitscorredoradeseguros.cl",
     "Grandes Clientes / Riesgos": "juan.carmona@hitscorredoradeseguros.cl",
     "Consultas Generales": "rodrigo.munoz@hitscorredoradeseguros.cl",
