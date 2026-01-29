@@ -14,7 +14,7 @@ module.exports = {
     "Consultas Generales": "rodrigo.munoz@hitscorredoraseguros.cl",
     Prueba: "edmundo@spohr.cl",
     Demo: "edmundo@spohr.cl",
-    Otro: "rodrigo.munoz@hitscorredoradeseguros.cl", // Default fallback
+    Otro: "rodrigo.munoz@hitscorredoraseguros.cl", // Default fallback
   },
 
   // Observaciones detalladas para el prompt de IA

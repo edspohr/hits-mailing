@@ -7,8 +7,8 @@ const expectedAssignments = {
   Cobranza: "marcela.aranguiz@hitscorredoraseguros.cl",
   Cotizaciones: "eddis.rodriguez@hitscorredoraseguros.cl",
   "Responsabilidad Civil Médica": "eddis.rodriguez@hitscorredoraseguros.cl",
-  "Consultas generales (Rodrigo)": "rodrigo.munoz@hitscorredoradeseguros.cl",
-  "Consultas generales (Juan Pablo)": "juan.carmona@hitscorredoradeseguros.cl",
+  "Consultas generales (Rodrigo)": "rodrigo.munoz@hitscorredoraseguros.cl",
+  "Consultas generales (Juan Pablo)": "juan.carmona@hitscorredoraseguros.cl",
   Prueba: "edmundo@spohr.cl",
   Demo: "demo@hitscorredoraseguros.cl",
 };
@@ -21,7 +21,7 @@ for (const [category, email] of Object.entries(expectedAssignments)) {
     console.log(`[PASS] ${category} -> ${email}`);
   } else {
     console.log(
-      `[FAIL] ${category}. Expected: ${email}, Got: ${configuredEmail}`
+      `[FAIL] ${category}. Expected: ${email}, Got: ${configuredEmail}`,
     );
     allPassed = false;
   }

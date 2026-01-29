@@ -15,7 +15,7 @@ const expectedMappings = [
   { category: "Cobranza", email: "marcela.aranguiz@hitscorredoraseguros.cl" },
   {
     category: "RC Médica Mapfre/Aspor",
-    email: "ivana.acosta@hitscorredoradeseguros.cl",
+    email: "ivana.acosta@hitscorredoraseguros.cl",
   },
   {
     category: "Grandes Clientes / Riesgos",
@@ -38,7 +38,7 @@ expectedMappings.forEach((item) => {
     console.log(`[PASS] Category '${item.category}' -> ${item.email}`);
   } else {
     console.error(
-      `[FAIL] Category '${item.category}' expected ${item.email}, got ${actualEmail}`
+      `[FAIL] Category '${item.category}' expected ${item.email}, got ${actualEmail}`,
     );
     errors++;
   }
