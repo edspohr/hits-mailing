@@ -19,13 +19,30 @@ module.exports = {
 
   // Observaciones detalladas para el prompt de IA
   rulesDetail: `
-    1. "Certificados RCM / Término" -> Rosa Valera. Certificados de póliza vigente y seguros SI son RCM. También solicitudes de "Término de Servicio". Plazo 4 días.
-    2. "Cotizaciones Generales / No RCM" -> Eddis Rodriguez. Cotizaciones generales y seguros que NO sean Responsabilidad Civil Médica.
-    3. "Cobranza" -> Marcela Aránguiz. Inquietudes de pagos. IMPORTANTE: Si se usa el concepto "Status", se refiere a status de pago y va aquí.
-    4. "RC Médica Mapfre/Aspor" -> Ivana Acosta. RC Médica específicamente asociada a Mapfre y Aspor.
-    5. "Grandes Clientes / Riesgos" -> Juan Pablo Carmona. Temas comerciales potenciales clientes de gran tamaño (Ej: Incendio, Sismo, Pólizas de Garantía).
-    6. "Consultas Generales" -> Rodrigo Muñoz. Consultas generales o casos no definidos que no entren en lo anterior.
-    7. "Prueba" o "Demo" -> Edmundo Spohr. Correos de prueba explícitos.
+    1. "Certificados RCM / Término" -> Rosa Valera.
+       - Palabras clave: "Certificado", "Vigencia", "RCM", "Responsabilidad Civil Médica", "Mala Praxis", "Término", "Anulación", "Dar de baja".
+       - REGLA DE ORO: Si el correo menciona "Responsabilidad Civil Médica", "RCM", "Médico" o "Clínica" en contexto de seguro, es AQUÍ.
+
+    2. "Cotizaciones Generales / No RCM" -> Eddis Rodriguez.
+       - Palabras clave: "Cotizar", "Seguro Auto", "Seguro Hogar", "Incendio Sismo" (si es habitacional), "Vida", "Accidentes", "Viaje".
+       - REGLA DE ORO: Todo lo que sea venta nueva o renovación que NO SEA de Responsabilidad Civil Médica. Si no es RCM, va aquí.
+
+    3. "Cobranza" -> Marcela Aránguiz.
+       - Palabras clave: "Pago", "Factura", "Transferencia", "Deuda", "Cuota", "Comprobante", "Cuenta Corriente", "Status de pago".
+       - REGLA DE ORO: Cualquier tema relacionado con dinero, pagos pendientes o confirmación de transferencias.
+
+    4. "RC Médica Mapfre/Aspor" -> Ivana Acosta.
+       - Palabras clave: "Mapfre", "Aspor", "Falmed" CON mención de "RC Médica".
+       - REGLA DE ORO: Específico para pólizas de estas compañías. Si es RCM pero no menciona compañía, prefiere a Rosa.
+
+    5. "Grandes Clientes / Riesgos" -> Juan Pablo Carmona.
+       - Palabras clave: "Póliza de Garantía", "TRC", "Todo Riesgo Construcción", "Equipo Móvil", "Flota", "Empresa", "Licuitación".
+       - REGLA DE ORO: Seguros corporativos complejos o de ingeniería.
+
+    6. "Consultas Generales" -> Rodrigo Muñoz.
+       - ÚLTIMO RECURSO: Solo asignar aquí si es imposible clasificar en las anteriores (ej. un "Hola" sin más texto, spam confuso que parece real, o reclamos genéricos sin contexto). NO usar para cotizaciones ni pagos.
+
+    7. "Prueba" o "Demo" -> Edmundo Spohr. Solo si dice explícitamente "Prueba de sistema" o "Demo".
   `,
 
   // Categorías válidas para pasarle al prompt de Gemini
