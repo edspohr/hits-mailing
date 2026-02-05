@@ -23,9 +23,8 @@ RUN cd server && npm install --production
 COPY server/ ./server/
 
 # Configuración de Entorno
-# El servidor corre en puerto 3000 por defecto
-ENV PORT=3000
-EXPOSE 3000
+# El servidor usará process.env.PORT inyectado por Railway
+
 
 # Iniciamos el "Monolito"
 CMD ["node", "server/index.js"]
